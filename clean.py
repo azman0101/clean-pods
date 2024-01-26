@@ -12,7 +12,8 @@ import requests
 # Get the token for authenticate via the API
 if os.path.exists('/var/run/secrets/kubernetes.io/serviceaccount'):
     token = open(
-        '/var/run/secrets/kubernetes.io/serviceaccount/token').read().replace('\n', '')
+        '/var/run/secrets/kubernetes.io/serviceaccount/token',
+    ).read().replace('\n', '')
 else:
     token = os.environ['TOKEN']
 
@@ -64,10 +65,14 @@ for pod in pods:
         print('To delete pod name %s' % pod['metadata']['name'])
         if pod['status']['phase'] in podStatus:
             podStartTime = datetime.strptime(
-                pod['status']['startTime'], '%Y-%m-%dT%H:%M:%SZ')
+                pod['status']['startTime'], '%Y-%m-%dT%H:%M:%SZ',
+            )
             nowDate = datetime.now()
             print('Now: %s' % str(nowDate))
             if ((podStartTime + timedelta(hours=maxHours)) < nowDate):
-                print('Deleting pod ('+pod['metadata']['name']+'). Status (' +
-                      pod['status']['phase']+'). Start time ('+str(podStartTime)+')')
+                print(
+                    'Deleting pod ('+pod['metadata']['name']+'). Status (' +
+                    pod['status']['phase'] +
+                    '). Start time ('+str(podStartTime)+')',
+                )
                 deletePod(pod['metadata']['name'], namespace)
