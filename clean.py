@@ -11,9 +11,13 @@ import requests
 # --- Variables ---------------------------------------------------------------
 # Get the token for authenticate via the API
 if os.path.exists('/var/run/secrets/kubernetes.io/serviceaccount'):
-    token = open(
-        '/var/run/secrets/kubernetes.io/serviceaccount/token',
-    ).read().replace('\n', '')
+    token = (
+        open(
+            '/var/run/secrets/kubernetes.io/serviceaccount/token',
+        )
+        .read()
+        .replace('\n', '')
+    )
 else:
     token = os.environ['TOKEN']
 
@@ -23,31 +27,31 @@ apiURL = os.environ['API_URL']
 # Namespace where the pods are running
 namespace = os.environ.get('NAMESPACE', 'gitlab')
 
-# Expiration time in hours, the pods older than "maxHours" are going to be deleted
+# Expiration time in hours, the pods older than "maxHours" are going to be deleted  # noqa: E501
 maxHours = int(os.environ.get('MAX_HOURS', '1'))
 
 # Only pods with the following status are going to be deleted
-# You can send a list of string separate by comma, Ex. "Pending, Running, Succeeded, Failed, Unknown"
+# You can send a list of string separate by comma, Ex. "Pending, Running, Succeeded, Failed, Unknown"  # noqa: E501
 podStatus = os.environ['POD_STATUS'].replace(' ', '').split(',')
 
 # --- Functions ---------------------------------------------------------------
 
 
 def callAPI(method, url):
-    headers = {'Authorization': 'Bearer '+token}
+    headers = {'Authorization': 'Bearer ' + token}
     requests.packages.urllib3.disable_warnings()
     request = requests.request(method, url, headers=headers, verify=False)
     return request.json()
 
 
 def getPods(namespace):
-    url = apiURL+'api/v1/namespaces/'+namespace+'/pods'
+    url = apiURL + 'api/v1/namespaces/' + namespace + '/pods'
     response = callAPI('GET', url)
     return response['items']
 
 
 def deletePod(podName, namespace):
-    url = apiURL+'api/v1/namespaces/'+namespace+'/pods/'+podName
+    url = apiURL + 'api/v1/namespaces/' + namespace + '/pods/' + podName
     response = callAPI('DELETE', url)
     print('Delete call => %s' % url)
     return response
@@ -65,14 +69,19 @@ for pod in pods:
         print('To delete pod name %s' % pod['metadata']['name'])
         if pod['status']['phase'] in podStatus:
             podStartTime = datetime.strptime(
-                pod['status']['startTime'], '%Y-%m-%dT%H:%M:%SZ',
+                pod['status']['startTime'],
+                '%Y-%m-%dT%H:%M:%SZ',
             )
             nowDate = datetime.now()
             print('Now: %s' % str(nowDate))
-            if ((podStartTime + timedelta(hours=maxHours)) < nowDate):
+            if (podStartTime + timedelta(hours=maxHours)) < nowDate:
                 print(
-                    'Deleting pod ('+pod['metadata']['name']+'). Status (' +
-                    pod['status']['phase'] +
-                    '). Start time ('+str(podStartTime)+')',
+                    'Deleting pod ('
+                    + pod['metadata']['name']
+                    + '). Status ('
+                    + pod['status']['phase']
+                    + '). Start time ('
+                    + str(podStartTime)
+                    + ')',
                 )
                 deletePod(pod['metadata']['name'], namespace)
