@@ -11,8 +11,8 @@ ENV PYTHONUNBUFFERED=0
 
 WORKDIR /app
 COPY clean.py ./
+COPY requirements.txt ./
 
-RUN pip install --no-cache-dir requests
-
+RUN pip install --no-cache-dir -r requirements.txt
 USER 1
-CMD ["python", "clean.py"]
+CMD ["/usr/local/bin/python", "/app/clean.py"]

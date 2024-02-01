@@ -89,3 +89,13 @@ roleRef:
   kind: Role
   name: demo-user-role
 ```
+
+How to test local to a kind cluster:
+```
+export TOKEN=eyJhb_REDACTED
+export API_URL=https://127.0.0.1:51920/
+export POD_STATUS=Running
+export MAX_HOURS=1
+export NAMESPACE=gitlab
+export STARTS_WITH=running-
+```

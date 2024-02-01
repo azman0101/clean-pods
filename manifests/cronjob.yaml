@@ -16,16 +16,16 @@ spec:
           creationTimestamp: null
         spec:
           containers:
-          - image: azman0101/cleanpods:v2
+          - image: cleanup-gitlab
             env:
             - name: POD_STATUS
-              value: Running
+              value: "Running,Failed"
             - name: MAX_HOURS
               value: "1"
             - name: NAMESPACE
               value: "gitlab"
             - name: STARTS_WITH
-              value: "running-"
+              value: "runner-"
             securityContext:
                 allowPrivilegeEscalation: false
                 readOnlyRootFilesystem: true

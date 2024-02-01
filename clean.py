@@ -1,12 +1,27 @@
 from __future__ import annotations
 
 import json
+import logging
 import os
 import sys
 from datetime import datetime
 from datetime import timedelta
 
 import requests
+
+logging.basicConfig(level=logging.DEBUG)
+
+logger = logging.getLogger(__name__)
+console_out = logging.StreamHandler(sys.stdout)
+
+
+console_out.setFormatter(
+    logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    ),
+)
+logger.addHandler(console_out)
+
 
 # --- Variables ---------------------------------------------------------------
 # Get the token for authenticate via the API
@@ -21,6 +36,7 @@ if os.path.exists('/var/run/secrets/kubernetes.io/serviceaccount'):
 else:
     token = os.environ['TOKEN']
 
+os.environ['REQUESTS_CA_BUNDLE'] = os.environ.get('CA_PATH', '/var/run/secrets/kubernetes.io/serviceaccount/ca.crt')  # noqa: E501
 # API URL. Ex. https://kubernetes.default.svc/api/
 apiURL = os.environ['API_URL']
 
@@ -31,29 +47,35 @@ namespace = os.environ.get('NAMESPACE', 'gitlab')
 maxHours = int(os.environ.get('MAX_HOURS', '1'))
 
 # Only pods with the following status are going to be deleted
-# You can send a list of string separate by comma, Ex. "Pending, Running, Succeeded, Failed, Unknown"  # noqa: E501
+# You can send a list of string separate by comma, Ex. "Pending, Running, Succeeded, Failed, Error, Unknown"  # noqa: E501
 podStatus = os.environ['POD_STATUS'].replace(' ', '').split(',')
 
+logger.debug('Using the following pod states: %s' % podStatus)
 # --- Functions ---------------------------------------------------------------
 
 
 def callAPI(method, url):
+    logger.debug('Call API %s' % url)
     headers = {'Authorization': 'Bearer ' + token}
-    requests.packages.urllib3.disable_warnings()
-    request = requests.request(method, url, headers=headers, verify=False)
+    # requests.packages.urllib3.disable_warnings()
+    request = requests.request(
+        method, url, headers=headers, verify=True, timeout=10,
+    )
     return request.json()
 
 
 def getPods(namespace):
+    logger.debug('Get pods from namespace %s' % namespace)
     url = apiURL + 'api/v1/namespaces/' + namespace + '/pods'
     response = callAPI('GET', url)
     return response['items']
 
 
 def deletePod(podName, namespace):
+    logger.debug(f'Delete pod {podName} from namespace {namespace}')
     url = apiURL + 'api/v1/namespaces/' + namespace + '/pods/' + podName
     response = callAPI('DELETE', url)
-    print('Delete call => %s' % url)
+    logger.info('Delete call => %s' % url)
     return response
 
 
@@ -61,21 +83,25 @@ def deletePod(podName, namespace):
 # Get all pods running in a namespace and delete older than "maxHours"
 pods = getPods(namespace)
 if not pods:
-    print('No pods for delete.')
+    logger.info('No pods for delete.')
 
 for pod in pods:
-    print('%s' % json.dumps(pod), file=sys.stderr)
+    logger.debug('%s' % json.dumps(pod))
+    logger.info('Pod name {} from namespace {}'.format(pod['metadata']['name'], pod['metadata']['namespace']))  # noqa: E501
+    logger.debug('Filter by starts with %s' % os.environ['STARTS_WITH'])
     if pod['metadata']['name'].startswith(os.environ['STARTS_WITH']):
-        print('To delete pod name %s' % pod['metadata']['name'])
+        logger.info('To delete pod name %s' % pod['metadata']['name'])
+        logger.debug('Pod status %s' % pod['status']['phase'])
         if pod['status']['phase'] in podStatus:
             podStartTime = datetime.strptime(
                 pod['status']['startTime'],
                 '%Y-%m-%dT%H:%M:%SZ',
             )
+            logger.debug('Pod start time %s' % str(podStartTime))
             nowDate = datetime.now()
-            print('Now: %s' % str(nowDate))
+            logger.info('Now: %s' % str(nowDate))
             if (podStartTime + timedelta(hours=maxHours)) < nowDate:
-                print(
+                logger.info(
                     'Deleting pod ('
                     + pod['metadata']['name']
                     + '). Status ('
@@ -85,3 +111,5 @@ for pod in pods:
                     + ')',
                 )
                 deletePod(pod['metadata']['name'], namespace)
+
+logger.info('Done.')
