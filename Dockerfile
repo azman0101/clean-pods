@@ -10,7 +10,7 @@ ENV STARTS_WITH="runner-"
 ENV PYTHONUNBUFFERED=0
 
 WORKDIR /app
-COPY clean.py ./
+COPY ./app/ ./
 COPY requirements.txt ./
 
 RUN pip install --no-cache-dir -r requirements.txt
