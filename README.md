@@ -99,3 +99,101 @@ export MAX_HOURS=1
 export NAMESPACE=gitlab
 export STARTS_WITH=running-
 ```
+
+
+You may want to test this chart deployment locally. We recommand you to spin up with `kind`.
+To ease this step of cluster building with a local registry, download [ctlptl](https://github.com/tilt-dev/ctlptl)
+
+Follow this install steps https://github.com/tilt-dev/ctlptl#how-do-i-install-it
+
+```bash
+
+cat <<EOF | ctlptl apply -f -
+apiVersion: ctlptl.dev/v1alpha1
+kind: Registry
+name: ctlptl-registry
+port: 5005
+---
+apiVersion: ctlptl.dev/v1alpha1
+kind: Cluster
+product: kind
+registry: ctlptl-registry
+kubernetesVersion: v1.21.14
+kindV1Alpha4Cluster:
+  name: cluster
+  nodes:
+  - role: control-plane
+  - role: worker
+  - role: worker
+EOF
+```
+
+Once your local cluster up&running, you may want to test it:
+
+```bash
+kind get clusters
+
+kind get nodes --name cluster
+cluster-control-plane
+cluster-worker
+cluster-worker2
+```
+
+Then with kubectl:
+
+```bash
+kubectl get no
+```
+
+To avoid data transfert to a remote registry, retreive the registry endpoint:
+
+```bash
+ctlptl get cluster kind-cluster -o template --template '{{ .status.localRegistryHosting.host }}'
+localhost:5005
+```
+
+Now your local registry is `localhost:5005`
+
+```bash
+docker buildx build --platform=linux/amd64 -t localhost:5005/clean-pods:latest .
+```
+
+## Usage of Tiltfile
+
+Tilt
+
+```bash
+tilt up --stream=true &
+```
+
+## Live debug with Tilt and vscode
+
+Le fichier launch.json doit être modifié pour correspondre à votre configuration, ici le port-forward vers le debugger est fait
+depuis le port 5555.
+
+```json
+{
+    // Utilisez IntelliSense pour en savoir plus sur les attributs possibles.
+    // Pointez pour afficher la description des attributs existants.
+    // Pour plus d'informations, visitez : https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python : attachement distant",
+            "type": "python",
+            "request": "attach",
+            "connect": {
+                "host": "localhost",
+                "port": 5555
+            },
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}/app/",
+                    "remoteRoot": "."
+                }
+            ],
+            "justMyCode": true
+        }
+    ]
+}
+```

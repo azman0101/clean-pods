@@ -7,7 +7,6 @@ rules:
 - apiGroups: [""] # "" indicates the core API group
   resources: ["pods"]
   verbs: ["get", "list", "delete"]
-  # add pod/status for checking pod status
 - apiGroups: [""] # "" indicates the core API group
   resources: ["pods/status"]
   verbs: ["get"]

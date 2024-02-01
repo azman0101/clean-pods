@@ -9,6 +9,20 @@ from datetime import timedelta
 
 import requests
 
+# import debugpy
+
+# # 5555 is the default attach port in the VS Code debug configurations.
+# Unless a host and port are specified, host defaults to 127.0.0.1
+# debugpy.listen(5555)
+# print("Waiting for debugger attach")
+# debugpy.wait_for_client()
+# debugpy.breakpoint()
+# print('break on this line')
+
+
+logging.basicConfig(level=logging.DEBUG)
+
+
 logging.basicConfig(level=logging.DEBUG)
 
 logger = logging.getLogger(__name__)

@@ -25,7 +25,7 @@ allow_k8s_contexts(k8s_context())
 docker_build(
     'cleanup-gitlab',
     context='.',
-    dockerfile='./Dockerfile',
+    dockerfile='./Dockerfile.dev',
     entrypoint=['/usr/local/bin/python', '/app/clean.py'],
     # entrypoint=['/bin/sh', '-c', 'sleep infinity'],
     platform='linux/amd64',
@@ -34,4 +34,4 @@ docker_build(
 yaml = kustomize('./manifests')
 k8s_yaml(yaml)
 
-k8s_resource('cleanup-gitlab')
+k8s_resource('cleanup-gitlab', port_forwards=5555)

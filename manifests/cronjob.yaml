@@ -36,6 +36,9 @@ spec:
                         - ALL
             imagePullPolicy: Always
             name: cleanup-gitlab
+            ports:
+            - containerPort: 5555
+              protocol: TCP
             resources:
               limits:
                 cpu: 200m
