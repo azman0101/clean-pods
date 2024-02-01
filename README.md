@@ -1,3 +1,6 @@
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/azman0101/clean-pods/master.svg)](https://results.pre-commit.ci/latest/github/azman0101/clean-pods/master)
+
+
 # Kubernetes: Clean pods older than X days
 Delete pods older than X days. The python script uses the `Kubernetes API` and the `TOKEN` from a service account to calculate and delete pods older than X days.
 
