@@ -8,11 +8,12 @@ ENV TOKEN=""
 ENV STARTS_WITH="runner-"
 
 ENV PYTHONUNBUFFERED=0
+ENV PYDEVD_DISABLE_FILE_VALIDATION=1
 
 WORKDIR /app
 COPY ./app/ ./
-COPY requirements.txt ./
+COPY requirements-dev.txt ./
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements-dev.txt
 USER 1
 CMD ["/usr/local/bin/python", "/app/clean.py"]
