@@ -1,3 +1,9 @@
 resources:
   - cronjob.yaml
   - role.yaml
+namespace: gitlab
+
+images:
+  - name: cleanup-gitlab
+    newName: ghcr.io/azman0101/clean-pods
+    newTag: master
