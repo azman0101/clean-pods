@@ -1,4 +1,4 @@
-FROM python:3.13.0a5-slim@sha256:4024be4854155da68418c0e6fd62f3b58637aef6946c5e9be101edb919f2ec8a
+FROM python:3.13.0-slim@sha256:02699283cc784486281bb4bdf233b8cf443f038d9b9c91873d31bd4cbd622a3d
 
 ENV API_URL="https://kubernetes.default.svc/"
 ENV NAMESPACE="gitlab"
