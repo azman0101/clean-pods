@@ -5,9 +5,8 @@ repos:
     -   id: trailing-whitespace
     -   id: end-of-file-fixer
     -   id: check-yaml
-        args: [--allow-multiple-documents]
-    -   id: debug-statements
-    -   id: double-quote-string-fixer
+    -   id: check-added-large-files
+    -   id: check-ast
     -   id: name-tests-test
     -   id: requirements-txt-fixer
 -   repo: https://github.com/asottile/setup-cfg-fmt
@@ -19,10 +18,6 @@ repos:
     hooks:
     -   id: reorder-python-imports
         exclude: ^(pre_commit/resources/|testing/resources/python3_hooks_repo/)
-        args: [--py39-plus, --add-import, 'from __future__ import annotations']
--   repo: https://github.com/asottile/add-trailing-comma
-    rev: v3.1.0
-    hooks:
     -   id: add-trailing-comma
 -   repo: https://github.com/asottile/pyupgrade
     rev: v3.19.1
@@ -41,5 +36,3 @@ repos:
     rev: v1.15.0
     hooks:
     -   id: mypy
-        additional_dependencies: [types-all]
-        exclude: ^testing/resources/
