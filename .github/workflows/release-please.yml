@@ -13,12 +13,11 @@ jobs:
   release-please:
     runs-on: ubuntu-latest
     steps:
-      - uses: google-github-actions/release-please-action@e4dc86ba9405554aeba3c6bb2d169500e7d3b4ee # v4
+      - uses: googleapis/release-please-action@7987652d64b4581673a76e33ad5e98e3dd56832f # v4
         with:
-          # this assumes that you have created a personal access token
-          # (PAT) and configured it as a GitHub action secret named
-          # `MY_RELEASE_PLEASE_TOKEN` (this secret name is not important).
-          token: ${{ secrets.MY_RELEASE_PLEASE_TOKEN }}
+          # Use the built-in GITHUB_TOKEN instead of a custom PAT
+          # This token has the necessary permissions based on the job permissions above
+          token: ${{ secrets.GITHUB_TOKEN }}
           # this is a built-in strategy in release-please, see "Action Inputs"
           # for more options
           release-type: simple
