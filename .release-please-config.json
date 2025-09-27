@@ -1,0 +1,15 @@
+{
+  "packages": {
+    ".": {
+      "release-type": "python",
+      "package-name": "clean-pods",
+      "extra-files": [
+        {
+          "type": "generic",
+          "path": "app/__init__.py",
+          "glob": false
+        }
+      ]
+    }
+  }
+}
