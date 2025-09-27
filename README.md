@@ -1,4 +1,4 @@
-[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/azman0101/clean-pods/master.svg)](https://results.pre-commit.ci/latest/github/azman0101/clean-pods/master)
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/azman0101/clean-pods/master.svg)](https://results.pre-commit.ci/latest/github/azman0101/clean-pods/master) [![Dependabot Updates](https://github.com/azman0101/clean-pods/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/azman0101/clean-pods/actions/workflows/dependabot/dependabot-updates)
 
 
 # Kubernetes: Clean pods older than X days
