@@ -6,4 +6,4 @@ namespace: gitlab
 images:
   - name: cleanup-gitlab
     newName: ghcr.io/azman0101/clean-pods
-    newTag: master@sha256:f75ada5789c76a0f7a27b7011346a3c6fe224a389890ebc84be7b57d11f70391
+    newTag: master@sha256:7de39012d34916927ed98f1cd8ec2d5a50fa706db73c248dba6fdd42ff7958d1
