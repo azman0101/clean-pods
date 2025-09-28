@@ -1,4 +1,4 @@
-certifi==2024.12.14
+certifi==2025.8.3
 charset-normalizer==3.4.3
 debugpy==1.8.17
 idna==3.10
